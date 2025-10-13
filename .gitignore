@@ -1,3 +1,11 @@
+# --- Data & outputs (mantén solo ejemplos)
+data/**
+!data/.gitkeep
+!data/README.md
+!data/sample_*.csv
+*.csv
+target_pred.csv
+!model/manifest.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
