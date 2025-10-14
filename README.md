@@ -39,4 +39,4 @@ This repo includes a focused test to ensure `score_csv.py` fails accordingly whe
 3. From the repo root, run:
 
 ```bash
-python -m pytest -q test/test_scorer_csv.py
+python -m pytest -q tests/test_scorer_csv.py
