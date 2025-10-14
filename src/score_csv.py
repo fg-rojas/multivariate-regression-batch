@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-# score_csv.py — aplica model.pkl a un CSV y guarda target_pred.csv
-
+# score_csv.py — aplica model.pkl a un CSV y guarda en target_pred_HHMMSS.csv
 
 import argparse
 from pathlib import Path
@@ -8,7 +7,8 @@ import json
 import joblib
 import numpy as np
 import pandas as pd
-
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 def load_model(path: Path):
     return joblib.load(path)
@@ -43,41 +43,41 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True, help="ruta a model.pkl")
     ap.add_argument("--input_csv", required=True, help="CSV con features")
-    ap.add_argument("--output_csv", default="target_pred.csv", help="CSV de salida")
-    ap.add_argument("--manifest", default=" model/manifest.json", help="ruta a model/manifest.json")
+    ap.add_argument("--output_csv", default="out/target_pred.csv", help=f"CSV de salida (se añadirá sufijo _YYYYmmdd_HHMMSS)")
+    ap.add_argument("--manifest", default="model/manifest.json", help="ruta a model/manifest.json")
     args = ap.parse_args()
 
     model = load_model(Path(args.model))
     df = pd.read_csv(args.input_csv)
 
+    features = load_manifest_features(Path(args.manifest)) if args.manifest else None
 
-    manifest_feats = load_manifest_features(Path(args.manifest)) if args.manifest else None
-
-    # Si no hay manifest.json de modelo de training entonces intenta usar features del modelo .pkl
-    model_feats = model["features"]
-
-
-    # Selección final de la lista de columnas y orden
-    features = manifest_feats or model_feats
     if not features:
         raise ValueError(
             "No se pudo determinar la lista de features. "
-            "Pasa --manifest con 'features' o guarda 'features' dentro del model.pkl, "
+            "Para solucionarlo, pasa --manifest con 'features'."
         )
 
-    # Validación: que el CSV tenga todas las columnas requeridas para el modelo
+    # Validación: CSV con todas las columnas requeridas
     missing = [c for c in features if c not in df.columns]
     if missing:
         raise ValueError(f"Faltan columnas para hacer predicciones del modelo en el CSV: {missing}")
 
-    # X como en training y predicción
+    # Construir X en el orden del manifest/model
     X = df.loc[:, features].to_numpy(dtype=np.float32, copy=False)
     yhat = predict(model, X)
 
+    # Timestamp de bogotá para nombrar archivo de salida
+    ts = datetime.now(ZoneInfo("America/Bogota")).strftime("%Y%m%d_%H%M%S")
+    out_path = Path(args.output_csv)
+
+    # si no trae extensión, por defecto .csv
+    suffix = out_path.suffix if out_path.suffix else ".csv"
+    out_with_ts = out_path.with_name(f"{out_path.stem}_{ts}{suffix}")
+
     # Guardar
-    pd.DataFrame({"target_pred": yhat}).to_csv(args.output_csv, index=False)
-    print(f"[SUCCESS]: {len(df)} filas insertadas en: {args.output_csv}")
-    print(f"Orden de features utilizado: {features[:10]}{' ...' if len(features) > 10 else ''}")
+    pd.DataFrame({"target_pred": yhat}).to_csv(out_with_ts, index=False)
+    print(f"[SUCCESS]: {len(df)} filas insertadas en: {out_with_ts} a las {ts}")
 
 if __name__ == "__main__":
     main()
