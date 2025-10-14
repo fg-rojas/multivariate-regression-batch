@@ -1,4 +1,4 @@
-# --- Data & outputs (mantén solo ejemplos)
+# --- Data & outputs
 data/**
 !data/.gitkeep
 !data/README.md
@@ -6,6 +6,7 @@ data/**
 *.csv
 target_pred.csv
 !model/manifest.json
+!data/blind_test_data.csv
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
