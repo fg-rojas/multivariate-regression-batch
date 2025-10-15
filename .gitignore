@@ -1,3 +1,13 @@
+# --- Data & outputs
+data/**
+!data/.gitkeep
+!data/README.md
+!data/sample_*.csv
+*.csv
+target_pred.csv
+!model/manifest.json
+!data/blind_test_data.csv
+!out/target_pred_result.csv
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
