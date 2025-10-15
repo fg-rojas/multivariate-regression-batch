@@ -20,9 +20,9 @@ py -3.11 -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-- You are ready to run the scorer_csv from console by using:
+- As the results are going to be stored in the folder 'out' make sure it exists before running the scorer_csv file. Once ready, type in console:
 ```bash
-python src/score_csv.py --model model/model.pkl --manifest model/manifest.json --input_csv data/blind_test_data.csv
+python src/score_csv.py --model model/model.pkl --manifest model/manifest.json --input_csv data/blind_test_data.csv --output_csv out/target_pred.csv
 ```
 
 
