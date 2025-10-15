@@ -14,6 +14,10 @@ py -3.11 -m venv .venv
 ```bash
 .\.venv\Scripts\Activate.ps1
 ```
+or in Bash/WSL:
+```bash
+source .venv/bin/activate
+```
 
 - Install required libraries:
 ```bash
