@@ -1,4 +1,4 @@
-# multivariate-regression-batch-api
+# multivariate-regression-batch
 
 This repository shows an implementation in batch for a multivariate regression model already trained and persisted in `model/model.pkl`
 
